@@ -11,7 +11,7 @@ cnx = sqlite3.connect(r'C:/Users/Akumarx084109/Desktop/Abhineet/DATA_SCIENCE/ACA
 df = pd.read_sql_query("SELECT * FROM Player_Attributes", cnx)
 
 # Data preprosessing
-
+# Removing the unwanted data and "NAN" values from categorical column
 df.dropna(subset=['defensive_work_rate', 'attacking_work_rate', 'preferred_foot'], inplace=True)
 df.drop(df.loc[df["defensive_work_rate"]=="0"].index,inplace=True)
 df.drop(df.loc[df["defensive_work_rate"]=="1"].index,inplace=True)
@@ -31,7 +31,7 @@ df.drop(df.loc[df["defensive_work_rate"]=="ormal"].index,inplace=True)
 df.drop(df.loc[df["defensive_work_rate"]=="tocky"].index,inplace=True)
 df.drop(df.loc[df["defensive_work_rate"]=="None"].index,inplace=True)
 df.drop(df.loc[df["attacking_work_rate"]=="None"].index,inplace=True)
-# Replacing NAN values with median
+# Replacing NAN values with median of float data column.
 df.fillna(df.median,inplace=True)
 
 #column "id", "player_fifa_api_id", "player_api_id" and "date" seems  to be irrelevant for prediction. 
@@ -46,6 +46,9 @@ labelencoder = LabelEncoder()
 X["preferred_foot"] = labelencoder.fit_transform(X["preferred_foot"])
 X["attacking_work_rate"] = labelencoder.fit_transform(X["attacking_work_rate"])
 X["defensive_work_rate"] = labelencoder.fit_transform(X["defensive_work_rate"])
+onehotencoder = OneHotEncoder(categorical_features = [3])
+X = onehotencoder.fit_transform(X).toarray()
+
 
 # Splitting the dataset into the Training set and Test set
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 1/4, random_state = 0)
